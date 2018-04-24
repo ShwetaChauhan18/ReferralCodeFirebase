@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "125594669679",
+    "firebase_url": "https://referralcodedemo.firebaseio.com",
+    "project_id": "referralcodedemo",
+    "storage_bucket": "referralcodedemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125594669679:android:c121b65a8061ec96",
+        "android_client_info": {
+          "package_name": "com.example.shweta.referralcodedemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "125594669679-hfqgo515pjg6p7ema2nlummu3v6th8dq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shweta.referralcodedemo",
+            "certificate_hash": "240412386e68abeaa431bf79cce2195b910f660a"
+          }
+        },
+        {
+          "client_id": "125594669679-iv28s8sonq94t491t4j3t11pjucdrhft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAp3J4ihRjBGCrOVECuvgHRK8nTCcXJgA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "125594669679-iv28s8sonq94t491t4j3t11pjucdrhft.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
