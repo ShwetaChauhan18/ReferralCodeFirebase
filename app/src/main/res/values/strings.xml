@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ReferralCodeDemo</string>
+    <!--<string name="app_code">myapp</string>-->
+
+    <string name="share">Share</string>
+    <string name="title_receive">Receive</string>
+    <string name="title_send">Send</string>
+    <string name="msg_no_deep_link">No deep link received.</string>
 </resources>

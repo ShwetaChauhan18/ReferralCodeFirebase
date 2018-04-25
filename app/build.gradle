@@ -8,6 +8,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
+   // flavorDimensions "irrelevant"
     defaultConfig {
         applicationId "com.example.shweta.referralcodedemo"
         minSdkVersion 21
@@ -22,6 +23,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    /*flavorDimensions "all"
+
+    productFlavors {
+        main {
+            dimension "all"
+
+            // TODO(developer): Replace this with your app code
+            //                  See: https://firebase.google.com/docs/dynamic-links/android/create#set-up-firebase-and-the-dynamic-links-sdk
+            resValue "string", "app_code", "YOUR_APP_CODE"
+        }
+    }*/
 
     androidExtensions {
         experimental = true
