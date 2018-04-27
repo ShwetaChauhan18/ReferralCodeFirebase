@@ -21,26 +21,99 @@ import java.net.URL
 import java.net.URLDecoder
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.appinvite.AppInvite
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.appinvite.FirebaseAppInvite
+import com.google.firebase.dynamiclinks.ShortDynamicLink
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
+
 
     private val TAG = "MainActivity"
-    private val DEEP_LINK_URL = "https://myapp.com/welcome"
+    private val DEEP_LINK_URL = "https://com.example.shweta.referralcodedemo"
     private lateinit var binding: ActivityMainBinding
     private lateinit var deepLink: Uri
     private lateinit var analytics: FirebaseAnalytics
-    //  private var googleApiClient: GoogleApiClient? = null
+    private var googleApiClient: GoogleApiClient? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.activityMain = this
+
+        googleApiClient = GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(AppInvite.API)
+                .build()
         init()
-        getDynamicLink()
+        // [START get_deep_link]
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(intent)
+                .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                    // Get deep link from result (may be null if no link is found)
+
+                    /* if (pendingDynamicLinkData != null) {
+                                            analytics = FirebaseAnalytics.getInstance(this@MainActivity)
+                                            deepLink = pendingDynamicLinkData.getLink()
+                                        }
+                                        // Handle the deep link. For example, open the linked
+                                        // content, or apply promotional credit to the user's
+                                        // account.
+                                        // ...
+                                        // [START_EXCLUDE]
+                                        // Display deep link in the UI
+                                        Utils.setLog("DEEPLINK ${deepLink.toString()}")
+                                        if (deepLink != null) {
+                                            Utils.showSnackBar(binding.rootView, "Found deep link!")
+                                            binding.linkViewReceive.text = deepLink.toString()
+
+                                            val invite = FirebaseAppInvite.getInvitation(pendingDynamicLinkData)
+                                            if (invite != null) {
+                                                val invitationId = invite.invitationId
+                                                Utils.setLog("INVITATIONID :$invitationId")
+                                            }
+                                        } else {
+                                            Utils.setLog("getDynamicLink: no link found")
+                                        }*/
+
+                    if (pendingDynamicLinkData == null) {
+                        Log.d(TAG, "getInvitation: no data");
+                    }
+
+                    // Get the deep link
+                    val deepLink = pendingDynamicLinkData.getLink()
+
+                    // Extract invite
+                    val invite = FirebaseAppInvite.getInvitation(pendingDynamicLinkData)
+                    if (invite != null) {
+                        val invitationId = invite.getInvitationId()
+                        Utils.setLog("INVITATIONID :$invitationId")
+                    }
+
+                    // Handle the deep link
+                    // [START_EXCLUDE]
+                    Log.d(TAG, "deepLink:" + deepLink);
+                    if (deepLink != null) {
+                        val intent = Intent(Intent.ACTION_VIEW);
+                        intent.setPackage(getPackageName());
+                        intent.setData(deepLink);
+
+                        startActivity(intent);
+                    }
+                    // [END_EXCLUDE]
+                }.addOnFailureListener(this, object : OnFailureListener {
+                    override fun onFailure(@NonNull e: Exception) {
+                        Utils.setLog("getDynamicLink:onFailure" + e)
+                    }
+                })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun init() {
@@ -65,45 +138,6 @@ class MainActivity : AppCompatActivity() {
         shareDeepLink(deepLink.toString())
     }
 
-    fun getDynamicLink() {
-        // [START get_deep_link]
-        FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(intent)
-                .addOnSuccessListener(this, object : OnSuccessListener<PendingDynamicLinkData> {
-                    override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData) {
-                        // Get deep link from result (may be null if no link is found)
-
-                        if (pendingDynamicLinkData != null) {
-                            analytics = FirebaseAnalytics.getInstance(this@MainActivity)
-                            deepLink = pendingDynamicLinkData.getLink()
-                        }
-                        // Handle the deep link. For example, open the linked
-                        // content, or apply promotional credit to the user's
-                        // account.
-                        // ...
-                        // [START_EXCLUDE]
-                        // Display deep link in the UI
-                        if (deepLink != null) {
-                            Utils.showSnackBar(binding.rootView, "Found deep link!")
-                            binding.linkViewReceive.text = deepLink.toString()
-
-                            val invite = FirebaseAppInvite.getInvitation(pendingDynamicLinkData)
-                            if (invite != null) {
-                                val invitationId = invite.invitationId
-                                Utils.setLog("INVITATIONID :$invitationId")
-                            }
-                        } else {
-                            Utils.setLog("getDynamicLink: no link found")
-                        }
-                        // [END_EXCLUDE]
-                    }
-                }).addOnFailureListener(this, object : OnFailureListener {
-                    override fun onFailure(@NonNull e: Exception) {
-                        Utils.setLog("getDynamicLink:onFailure" + e)
-                    }
-                })
-
-    }
 
     /**
      * Build a Firebase Dynamic Link.
@@ -117,7 +151,6 @@ class MainActivity : AppCompatActivity() {
      *                   require a minimum version.
      * @return a {@link Uri} representing a properly formed deep link.
      */
-    @VisibleForTesting
     fun buildDeepLink(@NonNull deepLink: Uri, minVersion: Int): Uri {
         val domain = "m83rn.app.goo.gl"
         // Set dynamic link parameters:
@@ -139,6 +172,27 @@ class MainActivity : AppCompatActivity() {
         return link.getUri()
     }
 
+    fun buildShortLink() {
+        val domain = "m83rn.app.goo.gl"
+        val shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://com.example.shweta.referralcodedemo"))
+                .setDynamicLinkDomain("m83rn.app.goo.gl")
+                .buildShortDynamicLink()
+                .addOnCompleteListener(this, object : OnCompleteListener<ShortDynamicLink> {
+                    override fun onComplete(task: Task<ShortDynamicLink>) {
+                        if (task.isSuccessful()) {
+                            // Short link created
+                            val shortLink = task.getResult().getShortLink();
+                            val flowchartLink = task.getResult().getPreviewLink();
+                        } else {
+                            // Error
+                            // ...
+                        }
+                    }
+
+                })
+    }
+
     private fun shareDeepLink(deepLink: String) {
         try {
             val url = URL(URLDecoder.decode(deepLink.toString(),
@@ -152,6 +206,10 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.i(TAG, "Could not decode Uri: " + e.getLocalizedMessage());
         }
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun validateAppCode() {
