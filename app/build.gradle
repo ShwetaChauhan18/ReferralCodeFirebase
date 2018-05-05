@@ -8,7 +8,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
-   // flavorDimensions "irrelevant"
+    // flavorDimensions "irrelevant"
     defaultConfig {
         applicationId "com.example.shweta.referralcodedemo"
         minSdkVersion 21
@@ -59,6 +59,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+
 
 
 apply plugin: 'com.google.gms.google-services'

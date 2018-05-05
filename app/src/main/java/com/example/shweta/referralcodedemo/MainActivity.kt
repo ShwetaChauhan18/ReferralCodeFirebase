@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
     private lateinit var binding: ActivityMainBinding
     private lateinit var deepLink: Uri
     private lateinit var analytics: FirebaseAnalytics
-    private var googleApiClient: GoogleApiClient? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +44,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.activityMain = this
 
-        googleApiClient = GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(AppInvite.API)
-                .build()
         init()
         // [START get_deep_link]
         FirebaseDynamicLinks.getInstance()
@@ -117,17 +112,10 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
     }
 
     private fun init() {
-        // Validate that the developer has set the app code.
-        validateAppCode()
-
         // Create a deep link and display it in the UI
         deepLink = buildDeepLink(Uri.parse(DEEP_LINK_URL), 0)
         binding.linkViewSend.text = deepLink.toString()
 
-        /*googleApiClient = GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(AppInvite.API)
-                .build()*/
     }
 
     //onConn
@@ -172,11 +160,11 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         return link.getUri()
     }
 
-    fun buildShortLink() {
+    fun buildShortLink(): Task<ShortDynamicLink> {
         val domain = "m83rn.app.goo.gl"
         val shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
-                .setLink(Uri.parse("https://com.example.shweta.referralcodedemo"))
-                .setDynamicLinkDomain("m83rn.app.goo.gl")
+                .setLink(Uri.parse(DEEP_LINK_URL))
+                .setDynamicLinkDomain(domain)
                 .buildShortDynamicLink()
                 .addOnCompleteListener(this, object : OnCompleteListener<ShortDynamicLink> {
                     override fun onComplete(task: Task<ShortDynamicLink>) {
@@ -191,6 +179,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                     }
 
                 })
+
+        return shortLinkTask;
     }
 
     private fun shareDeepLink(deepLink: String) {
@@ -212,14 +202,4 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    private fun validateAppCode() {
-        val appCode = "m83rn"
-        if (appCode.contains("YOUR_APP_CODE")) {
-            AlertDialog.Builder(this)
-                    .setTitle("Invalid Configuration")
-                    .setMessage("Please set your app code in app/build.gradle")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .create().show()
-        }
-    }
 }

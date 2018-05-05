@@ -4,6 +4,7 @@
     package="com.example.shweta.referralcodedemo">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
@@ -12,40 +13,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-
-        </activity>
-
-        <activity android:name=".TempActivity">
-
+        <activity android:name=".MainActivity" />
+        <activity android:name=".CreateDeepLinkActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
+        </activity>
+        <activity android:name=".RefferalCodeActivity">
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="example.com"
+                    android:host="myapp.com"
+                    android:scheme="http" />
+                <data
+                    android:host="myapp.com"
                     android:scheme="https" />
-
             </intent-filter>
-
         </activity>
-
-        <activity android:name=".FirstActivity">
-
-        </activity>
-
-        <activity android:name=".DeepLinkActivity">
-
-        </activity>
-
     </application>
 
 </manifest>

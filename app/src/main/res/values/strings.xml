@@ -18,4 +18,6 @@
     <string name="send_failed">Sending invitations failed</string>
     <string name="invite_dialog_title">You got an invitation!</string>
 
+    <string name="btnShare">Share &amp; Earn</string>
+
 </resources>
